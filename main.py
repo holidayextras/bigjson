@@ -19,27 +19,42 @@ JSON_SCHEMA_TO_BIGQUERY_TYPE_DICT = {
 }
 
 
-def merge_dicts(*dicts):
+def merge_property(merge_type, property_name, destination_value, source_value):
+    """Merges two properties.
+
+    """
+    if destination_value is None and source_value is None:
+        return None
+    if destination_value is None:
+        return source_value
+    if source_value is None:
+        return destination_value
+    if isinstance(destination_value, dict) and isinstance(source_value, dict):
+        return merge_dicts(merge_type, destination_value, source_value)
+    if isinstance(destination_value, list):
+        destination_list = copy.copy(destination_value)
+    else:
+        destination_list = [destination_value]
+    if isinstance(source_value, list):
+        source_list = source_value
+    else:
+        source_list = [source_value]
+    if property_name == 'required' and merge_type in ['anyOf', 'oneOf']:
+        return [v for v in destination_list if v in source_list]
+    destination_list.extend([v for v in source_list if v not in destination_list])
+    return destination_list
+
+
+def merge_dicts(merge_type, *dicts):
     """Deep merges two dictionaries.
 
     """
     result = copy.deepcopy(dicts[0])
     for dict_ in dicts[1:]:
-        dict_copy = copy.deepcopy(dict_)
-        for k in dict_copy.keys():
-            if k in result:
-                if isinstance(result[k], dict):
-                    result[k].update(dict_copy[k])
-                else:
-                    if not isinstance(result[k], list):
-                        result[k] = [result[k]]
-                    if isinstance(dict_copy[k], list):
-                        result[k].extend([v for v in dict_copy[k] if v not in result[k]])
-                    else:
-                        if dict_copy[k] not in result[k]:
-                            result[k].append(dict_copy[k])
-            else:
-                result[k] = dict_copy[k]
+        for name in dict_.keys():
+            merged_property = merge_property(merge_type, name, result.get(name), dict_.get(name))
+            if merged_property is not None:
+                result[name] = merged_property
     return result
 
 
@@ -78,7 +93,7 @@ def visit(name, node, mode='NULLABLE'):
     merged_node = node
     for x_of in ['allOf', 'anyOf', 'oneOf']:
         if x_of in node:
-            merged_node = merge_dicts(node, *node[x_of])
+            merged_node = merge_dicts(x_of, node, *node[x_of])
             del merged_node[x_of]
     type_ = merged_node['type']
     actual_mode = mode
@@ -90,7 +105,6 @@ def visit(name, node, mode='NULLABLE'):
             actual_mode = 'NULLABLE'
         type_ = non_null_types[0]
     result = simple(name, type_, merged_node,  actual_mode)
-    pprint(result.to_api_repr())
     return result
 
 
