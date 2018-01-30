@@ -74,28 +74,23 @@ def simple(name, type_, node, mode):
     return scalar(name, actual_type, mode, node.get('description'))
 
 
-def union(name, node, types, mode):
-    if len(types) == 1:
-        return simple(name, types[0], node, mode)
-    if 'null' in types:
-        non_null_types = [type_ for type_ in types if type_ != 'null']
-        return union(name, node, non_null_types, 'NULLABLE')
-    fields = tuple([visit(type_, {'type': type_, 'description': f'Union {type_} value.'}, mode) for type_ in types])
-    return bigquery.SchemaField(name, 'RECORD', mode, node.get('description'), fields)
-
-
 def visit(name, node, mode='NULLABLE'):
     merged_node = node
     for x_of in ['allOf', 'anyOf', 'oneOf']:
         if x_of in node:
             merged_node = merge_dicts(node, *node[x_of])
             del merged_node[x_of]
-    types = merged_node.get('type', list(JSON_SCHEMA_TO_BIGQUERY_TYPE_DICT.keys()))
-    if isinstance(types, str):
-        result = simple(name, types, merged_node,  mode)
-        pprint(result.to_api_repr())
-        return result
-    result = union(name, merged_node, types, mode)
+    type_ = merged_node['type']
+    actual_mode = mode
+    if isinstance(type_, list):
+        non_null_types = [scalar_type for scalar_type in type_ if scalar_type != 'null']
+        if len(non_null_types) > 1:
+            raise Exception(f'union type not supported: {node}')
+        if 'null' in type_:
+            actual_mode = 'NULLABLE'
+        type_ = non_null_types[0]
+    result = simple(name, type_, merged_node,  actual_mode)
+    pprint(result.to_api_repr())
     return result
 
 
