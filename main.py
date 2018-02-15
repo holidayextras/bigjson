@@ -66,7 +66,7 @@ def scalar(name, type_, mode, description):
 def array(name, node, mode):
     items_with_description = copy.deepcopy(node['items'])
     if 'description' not in items_with_description:
-        items_with_description['description'] = node['description']
+        items_with_description['description'] = node.get('description')
     return visit(name, items_with_description, 'REPEATED')
 
 
