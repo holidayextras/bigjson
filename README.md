@@ -4,7 +4,7 @@ A small library to parse json schemas and output to big query schema only, for n
 
 ## Installation
 
-    pip3 install google-cloud-bigquery
+    pip3 install -r requirements.txt
 
 # Usage
 
