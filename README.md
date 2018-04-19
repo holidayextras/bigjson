@@ -8,7 +8,19 @@ A small library to parse json schemas and output to big query schema only, for n
 
 # Usage
 
-## Check schema
+## Consuming
+
+### Convert schema
+
+```
+from bigjson import convert
+
+print(convert(json))
+```
+
+## CLI
+
+### Check schema
 
 Do not specify a GCloud project.
 
@@ -16,7 +28,7 @@ Do not specify a GCloud project.
 cat ../data-platform-message-schemas/dist/dereferenced/events/server/full_booking/v1.0.0/schema.json | python3 main.py
 ```
 
-## Create table
+### Create table
 
 Specify a GCloud project.
 
