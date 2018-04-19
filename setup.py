@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='bigjson',
-      version='0.1',
+      version='1.0',
       description='Converts json schema to big query schema',
       url='https://github.com/holidayextras/bigjson',
       author='example',

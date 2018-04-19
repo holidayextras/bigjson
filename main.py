@@ -118,12 +118,12 @@ def get_table_id(schema):
     version = id[-2].split('.')[0]
     return '_'.join(name + [version])
 
-
-if __name__ == '__main__':
-    input_schema = json.load(sys.stdin)
+def run(input_schema, project):
     output_schema = convert(input_schema)
     pprint([field.to_api_repr() for field in output_schema])
-    project = (len(sys.argv) > 1 and sys.argv[1]) or 'hx-trial'
+    if not project:
+         return
+
     bigquery_client = bigquery.Client(project=project)
     dataset_ref = bigquery_client.dataset('collector__streaming')
     table_id = get_table_id(input_schema)
@@ -135,3 +135,8 @@ if __name__ == '__main__':
     table.partitioning_type = 'DAY'
     table = bigquery_client.create_table(table)
     print(f'Created table {table_id} in dataset {dataset_ref} of project {project}.')
+
+if __name__ == '__main__':
+    input_schema = json.load(sys.stdin)
+    project = (len(sys.argv) > 1 and sys.argv[1])
+    run(input_schema, project)
