@@ -7,5 +7,5 @@ setup(name='bigjson',
       author='example',
       author_email='example@example.com',
       license='MIT',
-      packages=[],
+      packages=['bigjson'],
       zip_safe=False)
