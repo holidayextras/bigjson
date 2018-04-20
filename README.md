@@ -25,7 +25,7 @@ print(convert(json))
 Do not specify a GCloud project.
 
 ```
-cat ../data-platform-message-schemas/dist/dereferenced/events/server/full_booking/v1.0.0/schema.json | python3 bigjson/__init__.py
+cat schema.json | python3 bigjson/__init__.py
 ```
 
 ### Create table
@@ -33,5 +33,5 @@ cat ../data-platform-message-schemas/dist/dereferenced/events/server/full_bookin
 Specify a GCloud project.
 
 ```
-cat ../data-platform-message-schemas/dist/dereferenced/events/server/full_booking/v1.0.0/schema.json | python3 bigjson/__init__.py hx-trial
+cat schema.json | python3 bigjson/__init__.py project-id
 ```
