@@ -1,6 +1,6 @@
 # BigJson
 
-A small library to parse json schemas and output to big query schema only, for now
+A small library to parse JSON schemas and output to big query schema only, for now.
 
 ## Installation
 
@@ -8,18 +8,30 @@ A small library to parse json schemas and output to big query schema only, for n
 
 # Usage
 
-## Check schema
+## Consuming
+
+### Convert schema
+
+```
+from bigjson import convert
+
+print(convert(json))
+```
+
+## CLI
+
+### Check schema
 
 Do not specify a GCloud project.
 
 ```
-cat ../data-platform-message-schemas/dist/dereferenced/events/server/full_booking/v1.0.0/schema.json | python3 main.py
+cat schema.json | python3 bigjson/__init__.py
 ```
 
-## Create table
+### Create table
 
 Specify a GCloud project.
 
 ```
-cat ../data-platform-message-schemas/dist/dereferenced/events/server/full_booking/v1.0.0/schema.json | python3 main.py hx-trial
+cat schema.json | python3 bigjson/__init__.py project-id
 ```
