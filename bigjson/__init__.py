@@ -72,8 +72,9 @@ def array(name, node, mode):
 
 def object_(name, node, mode):
     required_properties = node.get('required', {})
+    properties = node.get('properties', {})
     fields = tuple([visit(key, value, 'REQUIRED' if key in required_properties else 'NULLABLE')
-                    for key, value in node['properties'].items()])
+                    for key, value in properties.items()])
     return bigquery.SchemaField(name, 'RECORD', mode, node.get('description'), fields)
 
 
