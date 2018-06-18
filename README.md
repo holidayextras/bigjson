@@ -33,5 +33,5 @@ cat schema.json | python3 bigjson/__init__.py
 Specify a GCloud project.
 
 ```
-cat schema.json | python3 bigjson/__init__.py project-id
+cat schema.json | python3 bigjson/__init__.py project-id dataset-id
 ```
