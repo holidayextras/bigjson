@@ -119,14 +119,14 @@ def get_table_id(schema):
     version = id[-2].split('.')[0]
     return '_'.join(name + [version])
 
-def run(input_schema, project):
+def run(input_schema, project, dataset):
     output_schema = convert(input_schema)
     pprint([field.to_api_repr() for field in output_schema])
     if not project:
          return
 
     bigquery_client = bigquery.Client(project=project)
-    dataset_ref = bigquery_client.dataset('collector__streaming')
+    dataset_ref = bigquery_client.dataset(dataset)
     table_id = get_table_id(input_schema)
     table_ref = dataset_ref.table(table_id)
     table = bigquery.Table(table_ref)
@@ -140,4 +140,5 @@ def run(input_schema, project):
 if __name__ == '__main__':
     input_schema = json.load(sys.stdin)
     project = (len(sys.argv) > 1 and sys.argv[1])
-    run(input_schema, project)
+    dataset = (len(sys.argv) > 2 and sys.argv[2])
+    run(input_schema, project, dataset)
