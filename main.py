@@ -125,7 +125,8 @@ if __name__ == '__main__':
     pprint([field.to_api_repr() for field in output_schema])
     project = (len(sys.argv) > 1 and sys.argv[1]) or 'hx-trial'
     bigquery_client = bigquery.Client(project=project)
-    dataset_ref = bigquery_client.dataset('collector__streaming')
+    dataset = (len(sys.argv) > 2 and sys.argv[2]) or 'collector__streaming'
+    dataset_ref = bigquery_client.dataset(dataset)
     table_id = get_table_id(input_schema)
     table_ref = dataset_ref.table(table_id)
     table = bigquery.Table(table_ref)
